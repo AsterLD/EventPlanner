@@ -1,0 +1,25 @@
+database:
+  url:
+    host: localhost
+    port: 5432
+    db: project
+    schema: notificator
+  credentials:
+    username: lazarev
+    password: 1234
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    change-log: classpath:db/liquibase-changelog.yml
+    default-schema: ${database.url.schema}
+    enabled: true
+    parameters:
+      schema: ${database.url.schema}
+  datasource:
+    url: jdbc:postgresql://${database.url.host}:${database.url.port}/${database.url.db}?currentSchema=${database.url.schema}
+    username: ${database.credentials.username}
+    password: ${database.credentials.password}
+    driverClassName: org.postgresql.Driver

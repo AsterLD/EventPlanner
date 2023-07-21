@@ -23,3 +23,7 @@ spring:
     username: ${database.credentials.username}
     password: ${database.credentials.password}
     driverClassName: org.postgresql.Driver
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notificator-listener

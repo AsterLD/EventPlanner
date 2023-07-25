@@ -24,4 +24,8 @@ public class Event {
     @Column(name = "event_date")
     private LocalDate eventDate;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 }

@@ -12,7 +12,7 @@ public class KafkaProducer {
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
-    public void sendMessage(String message){
+    public void sendMessage(String message) {
         log.info("Message sent: " + message);
         kafkaTemplate.send("notificator", message);
     }

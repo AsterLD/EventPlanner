@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class KafkaConsumer {
     @KafkaListener(topics = "notificator",
             groupId = "notificator-listener")
-    public void consume(String message){
+    public void consume(String message) {
         log.info("Message received: " + message);
     }
 }

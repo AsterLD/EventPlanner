@@ -1,5 +1,6 @@
 package com.ld.notificator.entity;
 
+import com.ld.notificator.enums.EventStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,6 +21,10 @@ public class Event {
 
     @Column(name = "type")
     private String type;
+
+    @Column(name = "event_status")
+    @Enumerated(EnumType.STRING)
+    private EventStatus eventStatus;
 
     @Column(name = "event_date")
     private LocalDate eventDate;

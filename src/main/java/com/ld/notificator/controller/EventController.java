@@ -21,6 +21,11 @@ public class EventController {
         return eventService.createEvent(eventDTO);
     }
 
+    @PutMapping(value = "/event/{eventId}/approve")
+    public String approveEvent(@PathVariable("eventId") Long eventId) {
+        return eventService.approveEvent(eventId);
+    }
+
     @PutMapping(value = "/event/{eventId}/update")
     public EventDTO updateEventById(@PathVariable("eventId") Long eventId, @RequestBody EventDTO eventDTO) {
         return eventService.updateEvent(eventId, eventDTO);

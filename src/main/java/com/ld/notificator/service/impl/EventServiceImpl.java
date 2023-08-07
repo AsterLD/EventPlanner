@@ -3,6 +3,7 @@ package com.ld.notificator.service.impl;
 import com.ld.notificator.dto.EventDTO;
 import com.ld.notificator.dto.EventToApproveDTO;
 import com.ld.notificator.entity.Event;
+import com.ld.notificator.enums.EventStatus;
 import com.ld.notificator.exception.EventException;
 import com.ld.notificator.kafka.KafkaProducer;
 import com.ld.notificator.repo.EventRepository;
@@ -32,8 +33,33 @@ public class EventServiceImpl implements EventService {
     public EventDTO createEvent(EventDTO event) {
         ModelMapper modelMapper = new ModelMapper();
         eventRepository.save(modelMapper.map(event, Event.class));
-        approveEvent(event);
         return event;
+    }
+
+    @Override
+    public String approveEvent(Long eventId) {
+        if (eventRepository.existsById(eventId)) {
+            ModelMapper modelMapper = new ModelMapper();
+            EventToApproveDTO eventToApproveDTO =
+                    modelMapper.map(eventRepository.findById(eventId).orElseThrow(), EventToApproveDTO.class);
+            kafkaProducer.sendMessage(eventToApproveDTO);
+            return "Event was successfully sent for approval";
+        } else {
+            throw new EventException("Event with this id not found.");
+        }
+    }
+
+    @Override
+    public String changeEventStatus(EventStatus eventStatus, Long eventId) {
+        if (eventRepository.existsById(eventId)) {
+            ModelMapper modelMapper = new ModelMapper();
+            Event event = eventRepository.findById(eventId).orElseThrow();
+            event.setEventStatus(eventStatus);
+            eventRepository.save(event);
+            return "Event status changed successfully";
+        } else {
+            throw new EventException("Event with this id not found.");
+        }
     }
 
     @Override
@@ -55,10 +81,4 @@ public class EventServiceImpl implements EventService {
         eventRepository.delete(event);
     }
 
-    private EventToApproveDTO approveEvent(EventDTO eventDTO) {
-        ModelMapper modelMapper = new ModelMapper();
-        EventToApproveDTO eventToApproveDTO = modelMapper.map(eventDTO, EventToApproveDTO.class);
-        kafkaProducer.sendMessage(eventToApproveDTO);
-        return eventToApproveDTO;
-    }
 }

@@ -1,7 +1,6 @@
 package com.ld.notificator.kafka;
 
 import com.ld.notificator.dto.EventStatusDTO;
-import com.ld.notificator.dto.EventToApproveDTO;
 import com.ld.notificator.service.EventService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

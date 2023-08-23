@@ -15,7 +15,7 @@ public class KafkaProducer {
 
     public void sendMessage(EventToApproveDTO event) {
         log.info("Message sent: " + event.getId());
-        kafkaTemplate.send("notificator", event);
+        kafkaTemplate.send("notificator-approve", event);
     }
 
 }

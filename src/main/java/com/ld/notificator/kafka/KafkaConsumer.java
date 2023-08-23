@@ -19,6 +19,7 @@ public class KafkaConsumer {
     @KafkaListener(topics = "notificator",
             groupId = "notificator-listener")
     public void consume(EventStatusDTO eventStatusDTO) {
+        log.info("Message get: " + eventStatusDTO.getEventStatus());
         eventService.changeEventStatus(eventStatusDTO.getEventStatus(), eventStatusDTO.getId());
     }
 }

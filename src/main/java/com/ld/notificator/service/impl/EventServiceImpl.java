@@ -40,8 +40,10 @@ public class EventServiceImpl implements EventService {
     public String approveEvent(Long eventId) {
         if (eventRepository.existsById(eventId)) {
             ModelMapper modelMapper = new ModelMapper();
-            EventToApproveDTO eventToApproveDTO =
-                    modelMapper.map(eventRepository.findById(eventId).orElseThrow(), EventToApproveDTO.class);
+            Event event = eventRepository.findById(eventId).orElseThrow();
+            event.setEventStatus(EventStatus.ON_APPROVAL);
+            eventRepository.save(event);
+            EventToApproveDTO eventToApproveDTO = modelMapper.map(event, EventToApproveDTO.class);
             kafkaProducer.sendMessage(eventToApproveDTO);
             return "Event was successfully sent for approval";
         } else {
@@ -52,7 +54,6 @@ public class EventServiceImpl implements EventService {
     @Override
     public String changeEventStatus(EventStatus eventStatus, Long eventId) {
         if (eventRepository.existsById(eventId)) {
-            ModelMapper modelMapper = new ModelMapper();
             Event event = eventRepository.findById(eventId).orElseThrow();
             event.setEventStatus(eventStatus);
             eventRepository.save(event);

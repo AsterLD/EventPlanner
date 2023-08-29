@@ -3,6 +3,7 @@ package com.ld.notificator.kafka;
 import com.ld.notificator.dto.EventToApproveDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -10,12 +11,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class KafkaProducer {
 
+    @Value("${spring.kafka.producer.name}")
+    private String topicName;
+
     @Autowired
     private KafkaTemplate<String, EventToApproveDTO> kafkaTemplate;
 
     public void sendMessage(EventToApproveDTO event) {
         log.info("Message sent: " + event.getId());
-        kafkaTemplate.send("notificator-approve", event);
+        kafkaTemplate.send(topicName, event);
     }
 
 }

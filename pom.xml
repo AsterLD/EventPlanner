@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.ld</groupId>
-	<artifactId>notificator</artifactId>
+	<artifactId>eventplanner</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Notificator</name>
-	<description>Notificator Service</description>
+	<name>EventPlanner</name>
+	<description>Event planner Service</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>

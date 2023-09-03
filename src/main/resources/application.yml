@@ -3,7 +3,7 @@ database:
     host: localhost
     port: 5432
     db: project
-    schema: notificator
+    schema: event-planner
   credentials:
     username: lazarev
     password: 1234
@@ -25,20 +25,20 @@ spring:
     driverClassName: org.postgresql.Driver
   kafka:
     topic:
-      name: notificator
+      name: event-planner
     producer:
-      name: notificator-approve
+      name: event-planner-approve
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     bootstrap-servers: localhost:9092
     consumer:
-      group-id: notificator-listener
+      group-id: event-planner-listener
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       properties:
         spring:
           json:
             trusted:
-              packages: 'com.ld.notificator.dto'
+              packages: 'com.ld.eventplanner.dto'
     listener:
       ack-mode: manual-immediate

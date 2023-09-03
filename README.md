@@ -1,1 +1,1 @@
-# Notificator
+# Event Planner

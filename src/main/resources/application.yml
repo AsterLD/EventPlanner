@@ -3,7 +3,7 @@ database:
     host: localhost
     port: 5432
     db: project
-    schema: event-planner
+    schema: event_planner
   credentials:
     username: lazarev
     password: 1234

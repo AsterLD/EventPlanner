@@ -1,7 +1,6 @@
 package com.ld.eventplanner.service.impl;
 
 import com.ld.eventplanner.dto.EventDTO;
-import com.ld.eventplanner.dto.EventToApproveDTO;
 import com.ld.eventplanner.entity.Event;
 import com.ld.eventplanner.enums.EventStatus;
 import com.ld.eventplanner.exception.EventException;
@@ -11,7 +10,6 @@ import com.ld.eventplanner.service.EventService;
 import com.ld.eventplanner.utils.Mapper;
 import com.ld.eventplanner.utils.Updater;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -74,7 +72,7 @@ public class EventServiceImpl implements EventService {
     public EventDTO updateEvent(Long eventId, EventDTO eventDTO) {
         if (eventRepository.existsById(eventId)) {
             Event event = eventRepository.findById(eventId).orElseThrow();
-            Updater.UpdateEventFromDTO(event, eventDTO);
+            Updater.UpdateEvent(event, eventDTO);
             eventRepository.save(event);
             return eventDTO;
         } else {

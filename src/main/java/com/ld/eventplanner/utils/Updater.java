@@ -6,7 +6,7 @@ import com.ld.eventplanner.entity.Event;
 import java.util.Objects;
 
 public class Updater {
-    public static void UpdateEventFromDTO(Event event, EventDTO eventDTO) {
+    public static void UpdateEvent(Event event, EventDTO eventDTO) {
         if (Objects.nonNull(eventDTO)) {
             if (Objects.nonNull(eventDTO.getName())) {
                 event.setName(eventDTO.getName());

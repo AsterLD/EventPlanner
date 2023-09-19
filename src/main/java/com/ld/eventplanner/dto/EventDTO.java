@@ -1,5 +1,6 @@
 package com.ld.eventplanner.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ld.eventplanner.enums.EventStatus;
 import lombok.Data;
@@ -8,6 +9,9 @@ import java.time.LocalDate;
 
 @Data
 public class EventDTO {
+
+    @JsonIgnore
+    private Long id;
 
     @JsonProperty("name")
     private String name;

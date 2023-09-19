@@ -5,6 +5,8 @@ import com.ld.eventplanner.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class EventController {
@@ -14,6 +16,13 @@ public class EventController {
     @GetMapping("/event/{eventId}")
     public EventDTO getEventById(@PathVariable("eventId") Long eventId) {
         return eventService.getEventById(eventId);
+    }
+
+    @GetMapping("/event/all")
+    public List<EventDTO> getAllEvents(
+            @RequestParam(value = "page", defaultValue = "1") Integer page,
+            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        return eventService.getAllEvents(page, pageSize);
     }
 
     @PostMapping("/event")

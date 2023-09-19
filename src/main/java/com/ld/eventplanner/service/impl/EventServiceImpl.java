@@ -8,10 +8,16 @@ import com.ld.eventplanner.exception.EventException;
 import com.ld.eventplanner.kafka.KafkaProducer;
 import com.ld.eventplanner.repo.EventRepository;
 import com.ld.eventplanner.service.EventService;
+import com.ld.eventplanner.utils.Mapper;
+import com.ld.eventplanner.utils.Updater;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,26 +31,28 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDTO getEventById(Long eventId) {
-        ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(eventRepository.findById(eventId).orElseThrow(), EventDTO.class);
+        return Mapper.mapEventToEventDTO(eventRepository.findById(eventId).orElseThrow());
     }
 
     @Override
-    public EventDTO createEvent(EventDTO event) {
-        ModelMapper modelMapper = new ModelMapper();
-        eventRepository.save(modelMapper.map(event, Event.class));
-        return event;
+    public List<EventDTO> getAllEvents(Integer page, Integer pageSize) {
+        List<Event> eventList = eventRepository.findAll(PageRequest.of(page -1, pageSize)).getContent();
+        return eventList.stream().map(Mapper::mapEventToEventDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public EventDTO createEvent(EventDTO eventDTO) {
+        eventRepository.save(Mapper.mapEventDTOToEvent(eventDTO));
+        return eventDTO;
     }
 
     @Override
     public String approveEvent(Long eventId) {
         if (eventRepository.existsById(eventId)) {
-            ModelMapper modelMapper = new ModelMapper();
             Event event = eventRepository.findById(eventId).orElseThrow();
             event.setEventStatus(EventStatus.ON_APPROVAL);
             eventRepository.save(event);
-            EventToApproveDTO eventToApproveDTO = modelMapper.map(event, EventToApproveDTO.class);
-            kafkaProducer.sendMessage(eventToApproveDTO);
+            kafkaProducer.sendMessage(Mapper.mapEventToEventToApproveDTO(event));
             return "Event was successfully sent for approval";
         } else {
             throw new EventException("Event with this id not found.");
@@ -52,25 +60,23 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public String changeEventStatus(EventStatus eventStatus, Long eventId) {
+    public void changeEventStatus(EventStatus eventStatus, Long eventId) {
         if (eventRepository.existsById(eventId)) {
             Event event = eventRepository.findById(eventId).orElseThrow();
             event.setEventStatus(eventStatus);
             eventRepository.save(event);
-            return "Event status changed successfully";
         } else {
             throw new EventException("Event with this id not found.");
         }
     }
 
     @Override
-    public EventDTO updateEvent(Long eventId, EventDTO event) {
+    public EventDTO updateEvent(Long eventId, EventDTO eventDTO) {
         if (eventRepository.existsById(eventId)) {
-            ModelMapper modelMapper = new ModelMapper();
-            Event editedEvent = modelMapper.map(event, Event.class);
-            editedEvent.setId(eventId);
-            eventRepository.save(editedEvent);
-            return event;
+            Event event = eventRepository.findById(eventId).orElseThrow();
+            Updater.UpdateEventFromDTO(event, eventDTO);
+            eventRepository.save(event);
+            return eventDTO;
         } else {
             throw new EventException("Event with this id not found.");
         }

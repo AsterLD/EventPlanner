@@ -1,23 +1,24 @@
 package com.ld.eventplanner.service;
 
-import com.ld.eventplanner.dto.EventDTO;
+import com.ld.eventplanner.dto.ReturnableEventDTO;
+import com.ld.eventplanner.dto.SavableEventDTO;
 import com.ld.eventplanner.enums.EventStatus;
 
 import java.util.List;
 
 public interface EventService {
 
-    EventDTO getEventById(Long eventId);
+    ReturnableEventDTO getEventById(Long eventId);
 
-    List<EventDTO> getAllEvents(Integer page, Integer pageSize);
+    List<ReturnableEventDTO> getAllEvents(Integer page, Integer pageSize);
 
-    EventDTO createEvent(EventDTO event);
+    SavableEventDTO createEvent(SavableEventDTO event);
 
     String approveEvent(Long eventId);
 
     void changeEventStatus(EventStatus eventStatus, Long eventId);
 
-    EventDTO updateEvent(Long eventId, EventDTO event);
+    ReturnableEventDTO updateEvent(Long eventId, SavableEventDTO event);
 
     void deleteEvent(Long eventId);
 

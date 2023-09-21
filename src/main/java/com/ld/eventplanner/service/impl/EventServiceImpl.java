@@ -1,6 +1,7 @@
 package com.ld.eventplanner.service.impl;
 
-import com.ld.eventplanner.dto.EventDTO;
+import com.ld.eventplanner.dto.ReturnableEventDTO;
+import com.ld.eventplanner.dto.SavableEventDTO;
 import com.ld.eventplanner.entity.Event;
 import com.ld.eventplanner.enums.EventStatus;
 import com.ld.eventplanner.exception.EventException;
@@ -28,20 +29,20 @@ public class EventServiceImpl implements EventService {
 
 
     @Override
-    public EventDTO getEventById(Long eventId) {
-        return Mapper.mapEventToEventDTO(eventRepository.findById(eventId).orElseThrow());
+    public ReturnableEventDTO getEventById(Long eventId) {
+        return Mapper.mapEventToReturnableEventDTO(eventRepository.findById(eventId).orElseThrow());
     }
 
     @Override
-    public List<EventDTO> getAllEvents(Integer page, Integer pageSize) {
-        List<Event> eventList = eventRepository.findAll(PageRequest.of(page -1, pageSize)).getContent();
-        return eventList.stream().map(Mapper::mapEventToEventDTO).collect(Collectors.toList());
+    public List<ReturnableEventDTO> getAllEvents(Integer page, Integer pageSize) {
+        List<Event> eventList = eventRepository.findAll(PageRequest.of(page - 1, pageSize)).getContent();
+        return eventList.stream().map(Mapper::mapEventToReturnableEventDTO).collect(Collectors.toList());
     }
 
     @Override
-    public EventDTO createEvent(EventDTO eventDTO) {
-        eventRepository.save(Mapper.mapEventDTOToEvent(eventDTO));
-        return eventDTO;
+    public SavableEventDTO createEvent(SavableEventDTO savableEventDTO) {
+        eventRepository.save(Mapper.mapEventDTOToEvent(savableEventDTO));
+        return savableEventDTO;
     }
 
     @Override
@@ -69,12 +70,12 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDTO updateEvent(Long eventId, EventDTO eventDTO) {
+    public ReturnableEventDTO updateEvent(Long eventId, SavableEventDTO savableEventDTO) {
         if (eventRepository.existsById(eventId)) {
             Event event = eventRepository.findById(eventId).orElseThrow();
-            Updater.UpdateEvent(event, eventDTO);
+            Updater.UpdateEvent(event, savableEventDTO);
             eventRepository.save(event);
-            return eventDTO;
+            return Mapper.mapEventToReturnableEventDTO(event);
         } else {
             throw new EventException("Event with this id not found.");
         }
@@ -82,8 +83,11 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void deleteEvent(Long eventId) {
-        Event event = eventRepository.findById(eventId).orElseThrow();
-        eventRepository.delete(event);
+        if (eventRepository.existsById(eventId)) {
+            eventRepository.delete(eventRepository.findById(eventId).orElseThrow());
+        } else {
+            throw new EventException("Event with this id not found.");
+        }
     }
 
 }

@@ -8,12 +8,12 @@ import java.util.Objects;
 public class Updater {
     public static void UpdateEvent(Event event, SavableEventDTO savableEventDTO) {
         if (Objects.nonNull(savableEventDTO)) {
-            if (Objects.nonNull(savableEventDTO.getName())) {
-                event.setName(savableEventDTO.getName());
-            } if (Objects.nonNull(savableEventDTO.getType())) {
-                event.setType(savableEventDTO.getType());
-            } if (Objects.nonNull(savableEventDTO.getEventDate())) {
-                event.setEventDate(savableEventDTO.getEventDate());
+            if (Objects.nonNull(savableEventDTO.name())) {
+                event.setName(savableEventDTO.name());
+            } if (Objects.nonNull(savableEventDTO.type())) {
+                event.setType(savableEventDTO.type());
+            } if (Objects.nonNull(savableEventDTO.eventDate())) {
+                event.setEventDate(savableEventDTO.eventDate());
             }
         }
     }

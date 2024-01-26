@@ -1,12 +1,8 @@
 package com.ld.eventplanner.dto;
 
 import com.ld.eventplanner.enums.EventStatus;
-import lombok.Data;
 
-@Data
-public class EventStatusDTO {
 
-    private Long id;
+public record EventStatusDTO(Long id, EventStatus eventStatus) {
 
-    private EventStatus eventStatus;
 }

@@ -18,7 +18,7 @@ public class KafkaProducer {
     private KafkaTemplate<String, EventToApproveDTO> kafkaTemplate;
 
     public void sendMessage(EventToApproveDTO event) {
-        log.info("Message sent: " + event.getId());
+        log.info("Message sent: " + event.id());
         kafkaTemplate.send(topicName, event);
     }
 

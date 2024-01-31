@@ -8,7 +8,7 @@ import com.ld.eventplanner.exception.EventException;
 import com.ld.eventplanner.kafka.KafkaProducer;
 import com.ld.eventplanner.repo.EventRepository;
 import com.ld.eventplanner.service.EventService;
-import com.ld.eventplanner.utils.Mapper;
+import com.ld.eventplanner.utils.EventMapper;
 import com.ld.eventplanner.utils.Updater;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,21 +27,23 @@ public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
 
+    private final EventMapper eventMapper;
+
 
     @Override
     public ReturnableEventDTO getEventById(Long eventId) {
-        return Mapper.mapEventToReturnableEventDTO(eventRepository.findById(eventId).orElseThrow());
+        return eventMapper.toReturnableEventDTO(eventRepository.findById(eventId).orElseThrow());
     }
 
     @Override
     public List<ReturnableEventDTO> getAllEvents(Integer page, Integer pageSize) {
         List<Event> eventList = eventRepository.findAll(PageRequest.of(page - 1, pageSize)).getContent();
-        return eventList.stream().map(Mapper::mapEventToReturnableEventDTO).collect(Collectors.toList());
+        return eventList.stream().map(eventMapper::toReturnableEventDTO).collect(Collectors.toList());
     }
 
     @Override
     public SavableEventDTO createEvent(SavableEventDTO savableEventDTO) {
-        eventRepository.save(Mapper.mapEventDTOToEvent(savableEventDTO));
+        eventRepository.save(eventMapper.toEvent(savableEventDTO));
         return savableEventDTO;
     }
 
@@ -51,7 +53,7 @@ public class EventServiceImpl implements EventService {
             Event event = eventRepository.findById(eventId).orElseThrow();
             event.setEventStatus(EventStatus.ON_APPROVAL);
             eventRepository.save(event);
-            kafkaProducer.sendMessage(Mapper.mapEventToEventToApproveDTO(event));
+            kafkaProducer.sendMessage(eventMapper.toEventToApproveDTO(event));
             return "Event was successfully sent for approval";
         } else {
             throw new EventException("Event with this id not found.");
@@ -75,7 +77,7 @@ public class EventServiceImpl implements EventService {
             Event event = eventRepository.findById(eventId).orElseThrow();
             Updater.UpdateEvent(event, savableEventDTO);
             eventRepository.save(event);
-            return Mapper.mapEventToReturnableEventDTO(event);
+            return eventMapper.toReturnableEventDTO(event);
         } else {
             throw new EventException("Event with this id not found.");
         }
